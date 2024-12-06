@@ -45,7 +45,7 @@ class WeatherApp(QWidget):
         self.get_weather_button.setObjectName("get_weather_button")
 
         # Set the description label to a larger fixed size
-        self.description_label.setFixedSize(200, 200)
+        self.emoji_label.setFixedSize(200, 200)
 
         self.setStyleSheet("""
                             QLabel, QPushButton{
@@ -92,19 +92,20 @@ class WeatherApp(QWidget):
 
     def display_weather(self, data):
         self.temprature_label.setText(f"{data['current']['temp_c']}°C")
+        self.description_label.setText(f"{data["current"]["condition"]["text"]}")
         icon_url = f"http:{data['current']['condition']['icon']}"
         response = requests.get(icon_url)
         if response.status_code == 200:
             pixmap = QPixmap()
             pixmap.loadFromData(BytesIO(response.content).read())
-            pixmap = pixmap.scaled(self.description_label.width(),
-                                   self.description_label.height(),
+            pixmap = pixmap.scaled(self.emoji_label.width(),
+                                   self.emoji_label.height(),
                                    Qt.KeepAspectRatio, 
                                    Qt.SmoothTransformation)
 
-            self.description_label.setPixmap(pixmap)
+            self.emoji_label.setPixmap(pixmap)
         else:
-            self.description_label.setText("Image not available")
+            self.emoji_label.setText("Image not available")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
